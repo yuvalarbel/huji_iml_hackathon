@@ -57,11 +57,11 @@ class Preprocess(object):
     def dummy_df(self):
         import consts
         for type in consts.TYPES:
-            type_value = self.data["linqmap_type"] == type
+            type_value = (self.data["linqmap_type"] == type).astype(int)
             self.add_new_feature("linqmap_type_" + type, type_value)
 
-        for subtype in consts.SUBTYPE:
-            type_value = self.data["linqmap_subtype"] == subtype
+        for subtype in consts.SUBTYPES:
+            type_value = (self.data["linqmap_subtype"] == subtype).astype(int)
             self.add_new_feature("linqmap_subtype_" + subtype, type_value)
 
     def magvar(self):
@@ -79,6 +79,3 @@ def preprocess_task_1(data):
     preprocesser = Preprocess(data)
     return preprocesser.group_records()
 
-# if __name__ == '__main__':
-#     preprocess_task_1(None)
-#     x = 1
