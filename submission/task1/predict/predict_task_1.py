@@ -35,7 +35,3 @@ def get_models(model_path, tag):
         models[name] = joblib.load(model_path + '_' + name + tag)
     trained = json.load(open(model_path + '_trained_check' + tag, 'r'))
     return models, trained
-
-
-if __name__ == "__main__":
-    predict_task_1('../' + TASK_1_VALIDATION_SET)

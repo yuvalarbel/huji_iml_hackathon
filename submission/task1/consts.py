@@ -5,6 +5,8 @@ TASK_2_TEST_DATES = ['2022/06/05', '2022/06/07', '2022/06/09']
 TASK_1_TRAINING_SET = 'data/task1/train_set.csv'
 TASK_1_TRAINING_LABELS = 'data/task1/train_labels.csv'
 TASK_1_VALIDATION_SET = 'data/task1/validation_set.csv'
+TASK_1_VALIDATION_LABELS = 'data/task1/validation_labels.csv'
+
 
 TEL_AVIV = "תל אביב - יפו"
 
