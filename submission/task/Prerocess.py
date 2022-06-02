@@ -12,6 +12,8 @@ from datetime import datetime
 
 
 class Preprocess(object):
+    DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
+                    'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments']
     Y_COLUMNS = ['linqmap_type', 'linqmap_subtype', 'x', 'y']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
     DATE_COLS = ['month', 'day', 'weekday']
@@ -23,6 +25,7 @@ class Preprocess(object):
     def __init__(self, data):
         self.data = data
         self.convert_update_date()
+        self.drop_unused_columns()
         self.unnormalized_features = data[[]]
         self.features = None
         self.labels = None
@@ -34,9 +37,7 @@ class Preprocess(object):
 
     def run(self):
         self.create_features()
-        self.create_labels()
-        self.create_multiclass_labels()
-        return self.features, self.multiclass_labels
+        return self.features
 
     def create_features(self):
         for func in self.feature_funcs:
@@ -79,12 +80,17 @@ class Preprocess(object):
     def convert_update_date(self):
         self.data['update_date'] = pd.to_datetime(self.data['update_date'], unit='ms')
 
+    def drop_unused_columns(self):
+        self.data = self.data.drop(self.DROP_COLUMNS, axis=1)
+        x=1
+
 
 def load_data(filename: str, has_tags: bool):
-    full_data = pd.read_csv(filename)
+    full_data = pd.read_csv(filename).sort_values(by=['update_date'])
     preprocesser = Preprocess(full_data)
-    x=1
-
+    preprocesser.run()
+    return preprocesser.data
 
 if __name__ == '__main__':
-    load_data("../task1/data/waze_data.csv", False)
+    processed_data = load_data("../task1/data/waze_data_train.csv", False)
+    x=1
