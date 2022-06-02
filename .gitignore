@@ -1,2 +1,4 @@
 submission/task1/.idea/
-submission/task1/__pycache__/
+*/*/*/__pycache__/
+*/*/__pycache__/
+*/__pycache__/
