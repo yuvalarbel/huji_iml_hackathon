@@ -7,6 +7,8 @@ import json
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+import time
+from datetime import datetime
 
 
 class Preprocess(object):
@@ -20,6 +22,7 @@ class Preprocess(object):
 
     def __init__(self, data):
         self.data = data
+        self.convert_update_date()
         self.unnormalized_features = data[[]]
         self.features = None
         self.labels = None
@@ -72,3 +75,16 @@ class Preprocess(object):
     def numbers(self):
         for col in self.NUMBER_COLS:
             self.add_new_feature(col, self.data[col])
+
+    def convert_update_date(self):
+        self.data['update_date'] = pd.to_datetime(self.data['update_date'], unit='ms')
+
+
+def load_data(filename: str, has_tags: bool):
+    full_data = pd.read_csv(filename)
+    preprocesser = Preprocess(full_data)
+    x=1
+
+
+if __name__ == '__main__':
+    load_data("../task1/data/waze_data.csv", False)
