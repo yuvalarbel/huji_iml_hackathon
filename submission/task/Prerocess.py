@@ -2,13 +2,8 @@
 # coding: utf-8
 
 # Standard Library Imports
-import re
-import json
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
-import time
-from datetime import datetime
 
 
 class Preprocess(object):
@@ -24,20 +19,37 @@ class Preprocess(object):
 
     def __init__(self, data):
         self.data = data
+        self.filter_city()
         self.convert_update_date()
         self.drop_unused_columns()
-        self.unnormalized_features = data[[]]
-        self.features = None
+        self.features = data[[]]
+        self.groups_of_features = data[[]]
         self.labels = None
 
         self.feature_funcs = [
             self.datetimes,
-            self.numbers,
+            self.numbers
         ]
 
     def run(self):
         self.create_features()
         return self.features
+
+    def group_records(self):
+        for name, value in self.features.iteritems():
+            for i in range(4):
+                self.groups_of_features.insert(self.features.shape[1], name + "_" + i,
+                                               value[i:self.features.shape[0] - 5 + i])
+
+        self.groups_of_features.insert(self.features.shape[1], "type_label",
+                                       self.features["linqmap_type"][4:])
+        self.groups_of_features.insert(self.features.shape[1], "subtype_label",
+                                       self.features["linqmap_subtype"][4:])
+        self.groups_of_features.insert(self.features.shape[1], "x_label", self.features["x"][4:])
+        self.groups_of_features.insert(self.features.shape[1], "y_label", self.features["y"][4:])
+
+    def filter_city(self):
+        self.data = self.data[self.data["linqmap_city"] == "תל אביב - יפו"]
 
     def create_features(self):
         for func in self.feature_funcs:
@@ -45,12 +57,8 @@ class Preprocess(object):
 
     def add_new_feature(self, name, feature):
         assert feature.size == self.data.shape[0]
-        assert name not in self.unnormalized_features.columns
-        self.unnormalized_features.insert(self.unnormalized_features.shape[1], name, feature)
-
-    def filter_features(self):
-        self.index_filter = self.unnormalized_features[self.FILTER_COLUMN_NAME] >= self.TWO_WEEKS
-        self.unnormalized_features = self.unnormalized_features[self.index_filter].copy()
+        assert name not in self.features.columns
+        self.features.insert(self.features.shape[1], name, feature)
 
     ###### Feature functions ######
     def col_to_datetime(self, col):
@@ -82,15 +90,17 @@ class Preprocess(object):
 
     def drop_unused_columns(self):
         self.data = self.data.drop(self.DROP_COLUMNS, axis=1)
-        x=1
 
 
 def load_data(filename: str, has_tags: bool):
     full_data = pd.read_csv(filename).sort_values(by=['update_date'])
     preprocesser = Preprocess(full_data)
     preprocesser.run()
+    preprocesser.group_records()
+
     return preprocesser.data
+
 
 if __name__ == '__main__':
     processed_data = load_data("../task1/data/waze_data_train.csv", False)
-    x=1
+    x = 1
