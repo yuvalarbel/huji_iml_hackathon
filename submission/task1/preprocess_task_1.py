@@ -71,11 +71,11 @@ class Preprocess(object):
 
 
 def preprocess_task_1(data):
-    data = pd.read_csv("data/waze_take_features.csv")
+    # data = pd.read_csv("data/waze_take_features.csv")
     preprocesser = Preprocess(data)
     return preprocesser.group_records()
 
 
-if __name__ == '__main__':
-    preprocess_task_1(None)
-    x = 1
+# if __name__ == '__main__':
+#     preprocess_task_1(None)
+#     x = 1
