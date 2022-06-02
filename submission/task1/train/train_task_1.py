@@ -8,7 +8,7 @@ from consts import TASK_1_TRAINING_SET, TASK_1_TRAINING_LABELS, TASK_1_MODEL_PAT
 from preprocess_task_1 import preprocess_task_1
 
 
-def train_model(training_data_file_path, training_labels_file_path, tag='', save_path='../' + TASK_1_MODEL_PATH):
+def train_task_1(training_data_file_path, training_labels_file_path, save_path, tag=''):
     """
     Train the model
     """
@@ -68,4 +68,4 @@ class Task1Model(object):
 
 
 if __name__ == "__main__":
-    train_model('../' + TASK_1_TRAINING_SET, '../' + TASK_1_TRAINING_LABELS)
+    train_task_1('../' + TASK_1_TRAINING_SET, '../' + TASK_1_TRAINING_LABELS, '../' + TASK_1_MODEL_PATH)

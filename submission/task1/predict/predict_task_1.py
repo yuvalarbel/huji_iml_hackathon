@@ -6,7 +6,7 @@ from consts import TASK_1_VALIDATION_SET, TASK_1_MODEL_PATH, TASK_1_MODELS_NAMES
 from preprocess_task_1 import preprocess_task_1
 
 
-def predict_task_1(prediction_set_file_path, tag='', model_path='../' + TASK_1_MODEL_PATH):
+def predict_task_1(prediction_set_file_path, model_path, tag=''):
     data = pd.read_csv(prediction_set_file_path)
     processed_data = preprocess_task_1(data)
 
@@ -20,8 +20,8 @@ def predict_task_1(prediction_set_file_path, tag='', model_path='../' + TASK_1_M
     results[SUBTYPE] = ""
     for type_, mc_subtypes in MOST_COMMON_SUBTYPE.items():
         model_label = SUBTYPE + "_" + type_.lower()
-        if trained[model_label]:
-            type_data = processed_data[results[TYPE] == type_]
+        type_data = processed_data[results[TYPE] == type_]
+        if trained[model_label] and type_data.shape[0]:
             results[SUBTYPE][type_data.index] = models[model_label].predict(type_data)
         else:
             results[SUBTYPE][results[TYPE] == type_] = mc_subtypes
@@ -35,3 +35,7 @@ def get_models(model_path, tag):
         models[name] = joblib.load(model_path + '_' + name + tag)
     trained = json.load(open(model_path + '_trained_check' + tag, 'r'))
     return models, trained
+
+
+if __name__ == "__main__":
+    predict_task_1('../' + TASK_1_VALIDATION_SET, '../' + TASK_1_MODEL_PATH)
