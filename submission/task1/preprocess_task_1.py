@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 
 
@@ -76,6 +77,7 @@ def preprocess_task_1(data):
     return preprocesser.group_records()
 
 
-# if __name__ == '__main__':
-#     preprocess_task_1(None)
+if __name__ == '__main__':
+    df=preprocess_task_1(pandas.read_csv('data/task1/train_set.csv'))
+    df.to_csv("C:\\Users\\User\\Desktop\\IMLHack\\preprocessed_train_1.csv")
 #     x = 1
