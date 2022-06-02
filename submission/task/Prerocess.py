@@ -9,7 +9,8 @@ import pandas as pd
 class Preprocess(object):
     DUMMY_LIST = ['linqmap_type_0', 'linqmap_type_1', 'linqmap_type_2', 'linqmap_type_3',
                   'linqmap_subtype_0', 'linqmap_subtype_1', 'linqmap_subtype_2', 'linqmap_subtype_3',
-                  'type_label', 'subtype_label']
+                  'type_label', 'subtype_label', 'update_date_1', 'update_date_2', 'update_date_3',
+                  'update_date_4']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
                     'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
                     'linqmap_city', 'linqmap_street']
