@@ -46,10 +46,10 @@ class Preprocess(object):
                 copied_value = copied_value.drop(["index"], axis=1)
                 self.groups_of_features[name + "_" + str(i)] = copied_value
 
-        # self.groups_of_features["type_label"] = self.features["linqmap_type"][4:]
-        # self.groups_of_features["subtype_label"] = self.features["linqmap_subtype"][4:]
         labels_data = copied_data[4:]
         labels_data = labels_data.reset_index()
+        self.groups_of_features["type_label"] = labels_data["linqmap_type"]
+        self.groups_of_features["subtype_label"] = labels_data["linqmap_subtype"]
         self.groups_of_features["x_label"] = labels_data["x"]
         self.groups_of_features["y_label"] = labels_data["y"]
 
