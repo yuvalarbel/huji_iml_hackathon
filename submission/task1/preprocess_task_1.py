@@ -2,7 +2,6 @@ import pandas as pd
 
 
 class Preprocess(object):
-    DUMMY_LIST = ['linqmap_type', 'linqmap_subtype']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
                     'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
                     'linqmap_city', 'linqmap_street', 'test_set',
@@ -56,10 +55,14 @@ class Preprocess(object):
         self.data = self.data.drop(self.DROP_COLUMNS, axis=1)
 
     def dummy_df(self):
-        for x in self.DUMMY_LIST:
-            dummies = pd.get_dummies(self.data[x], prefix=x, dummy_na=False)
-            self.data = self.data.drop(x, 1)
-            self.data = pd.concat([self.data, dummies], axis=1)
+        import consts
+        for type in consts.TYPES:
+            type_value = self.data["linqmap_type"] == type
+            self.add_new_feature("linqmap_type_" + type, type_value)
+
+        for subtype in consts.SUBTYPE:
+            type_value = self.data["linqmap_subtype"] == subtype
+            self.add_new_feature("linqmap_subtype_" + subtype, type_value)
 
     def magvar(self):
         import numpy as np
@@ -75,7 +78,6 @@ def preprocess_task_1(data):
     # data = pd.read_csv("data/waze_take_features.csv")
     preprocesser = Preprocess(data)
     return preprocesser.group_records()
-
 
 # if __name__ == '__main__':
 #     preprocess_task_1(None)
