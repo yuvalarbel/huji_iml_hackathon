@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 
 
@@ -5,7 +6,8 @@ class Preprocess(object):
     DUMMY_LIST = ['linqmap_type', 'linqmap_subtype']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
                     'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
-                    'linqmap_city', 'linqmap_street', 'test_set', 'update_date']
+                    'linqmap_city', 'linqmap_street', 'update_date',
+                    'linqmap_magvar', 'Unnamed: 0']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
     DATE_COLS = ['weekday']
     TIME_COLS = ['hour']
@@ -60,3 +62,9 @@ class Preprocess(object):
 def preprocess_task_2(data):
     preprocesser = Preprocess(data)
     return preprocesser.run()
+
+if __name__ == '__main__':
+    pr=preprocess_task_2(pandas.read_csv('data/task2/waze_data_train.csv'))
+    pr.to_csv("C:\\Users\\User\\Desktop\\IMLHack\\preprocessed_train_2.csv")
+
+#     x = 1

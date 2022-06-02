@@ -5,7 +5,8 @@ class Preprocess(object):
     DUMMY_LIST = ['linqmap_type', 'linqmap_subtype']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
                     'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
-                    'linqmap_city', 'linqmap_street', 'test_set', 'update_date']
+                    'linqmap_city', 'linqmap_street', 'test_set',
+                    'update_date', 'linqmap_magvar']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
     DATE_COLS = ['weekday']
     TIME_COLS = ['hour']
