@@ -108,4 +108,3 @@ def load_data(filename: str, has_tags: bool):
 
 if __name__ == '__main__':
     processed_data = load_data("../task1/data/waze_data.csv", False)
-    x = 1
