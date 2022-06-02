@@ -22,9 +22,9 @@ def predict_task_1(prediction_set_file_path, model_path, tag=''):
         model_label = SUBTYPE + "_" + type_.lower()
         type_data = processed_data[results[TYPE] == type_]
         if trained[model_label] and type_data.shape[0]:
-            results[SUBTYPE][type_data.index] = models[model_label].predict(type_data)
+            results.loc[type_data.index, SUBTYPE] = models[model_label].predict(type_data)
         else:
-            results[SUBTYPE][results[TYPE] == type_] = mc_subtypes
+            results.loc[results[TYPE] == type_, SUBTYPE] = mc_subtypes
 
     return results
 

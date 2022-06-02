@@ -1,4 +1,6 @@
 import pandas as pd
+from warnings import simplefilter
+simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
 class Preprocess(object):
@@ -13,7 +15,7 @@ class Preprocess(object):
     NUMBER_COLS = ['linqmap_reportRating', 'linqmap_roadType', 'linqmap_reliability']
 
     def __init__(self, data):
-        self.data = data
+        self.data = data.copy()
         self.convert_update_date()
         self.datetimes()
         self.magvar()
@@ -26,7 +28,7 @@ class Preprocess(object):
         copied_data = copied_data.reset_index()
 
         for i in range(4):
-            records = copied_data[copied_data["index"] % 4 == i]
+            records = copied_data[copied_data["index"] % 4 == i].copy()
             records = records.reset_index()
             records = records.drop(["index"], axis=1)
             records = records.drop(["level_0"], axis=1)
