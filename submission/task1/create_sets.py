@@ -50,9 +50,9 @@ def create_sets():
     validation_set = validation_set.drop(['new_update_date', 'update_date_day', 'linenum'], axis=1)
     test_set = test_set.drop(['new_update_date', 'update_date_day', 'linenum'], axis=1)
 
-    train_labels = data[np.logical_and(data.test_set.isin(train_groups), data.linenum == 5)].copy()[LABEL_COLUMNS]
-    validation_labels = data[np.logical_and(data.test_set.isin(validation_groups), data.linenum == 5)].copy()[LABEL_COLUMNS]
-    test_labels = data[np.logical_and(data.test_set.isin(test_groups), data.linenum == 5)].copy()[LABEL_COLUMNS]
+    train_labels = data[np.logical_and(data.test_set.isin(train_groups), data.linenum == 5)].copy()[['test_set'] + LABEL_COLUMNS]
+    validation_labels = data[np.logical_and(data.test_set.isin(validation_groups), data.linenum == 5)].copy()[['test_set'] + LABEL_COLUMNS]
+    test_labels = data[np.logical_and(data.test_set.isin(test_groups), data.linenum == 5)].copy()[['test_set'] + LABEL_COLUMNS]
 
     train_set.to_csv(r'data\task1\train_set.csv', index=False)
     validation_set.to_csv(r'data\task1\validation_set.csv', index=False)
