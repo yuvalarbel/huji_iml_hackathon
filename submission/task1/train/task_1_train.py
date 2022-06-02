@@ -4,11 +4,11 @@ import json
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import joblib
 
-from consts import TASK_1_TRAINING_SET, TASK_1_TRAINING_LABELS, TASK_1_MODEL_PATH, LABEL_COLUMNS, TYPES
+from consts import TASK_1_TRAINING_SET, TASK_1_TRAINING_LABELS, TASK_1_MODEL_PATH, TYPES, BASE_LABELS, TYPE, SUBTYPE
 from preprocess_task_1 import preprocess_task_1
 
 
-def train_model(training_data_file_path, training_labels_file_path, save_path, tag=''):
+def train_model(training_data_file_path, training_labels_file_path, tag='', save_path='../' + TASK_1_MODEL_PATH):
     """
     Train the model
     """
@@ -23,10 +23,6 @@ def train_model(training_data_file_path, training_labels_file_path, save_path, t
 
 
 class Task1Model(object):
-    BASE_LABELS = ['linqmap_type', 'x', 'y']
-    TYPE = 'linqmap_type'
-    SUBTYPE = 'linqmap_subtype'
-
     def __init__(self, save_path, tag='', n_estimators=100, max_depth=None):
         self.save_path = save_path
         self.tag = tag
@@ -46,18 +42,18 @@ class Task1Model(object):
         """
         Train the model
         """
-        for label in self.BASE_LABELS:
+        for label in BASE_LABELS:
             self.models[label].fit(data, labels[label])
             self.trained[label] = True
 
         for specific_type in TYPES:
-            idxs = np.logical_and(labels[self.TYPE] == specific_type,
-                                  labels[self.SUBTYPE].notna())
-            type_labels = labels[self.SUBTYPE][idxs]
+            idxs = np.logical_and(labels[TYPE] == specific_type,
+                                  labels[SUBTYPE].notna())
+            type_labels = labels[SUBTYPE][idxs]
             if len(type_labels) == 0:
                 continue
             type_data = data[idxs]
-            model_label = self.SUBTYPE + "_" + specific_type.lower()
+            model_label = SUBTYPE + "_" + specific_type.lower()
             self.models[model_label].fit(type_data, type_labels)
             self.trained[model_label] = True
 
@@ -72,4 +68,4 @@ class Task1Model(object):
 
 
 if __name__ == "__main__":
-    train_model('../' + TASK_1_TRAINING_SET, '../' + TASK_1_TRAINING_LABELS, '../' + TASK_1_MODEL_PATH, tag='')
+    train_model('../' + TASK_1_TRAINING_SET, '../' + TASK_1_TRAINING_LABELS)
