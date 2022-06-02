@@ -86,7 +86,7 @@ class Preprocess(object):
 
 
 def load_data(filename: str, has_tags: bool):
-    full_data = pd.read_csv(filename).sort_values(by=['update_date'])
+    full_data = pd.read_csv(filename)
     preprocesser = Preprocess(full_data)
     preprocesser.group_records()
     preprocesser.dummy_df()
@@ -94,5 +94,4 @@ def load_data(filename: str, has_tags: bool):
 
 
 if __name__ == '__main__':
-    processed_data = load_data("../task1/data/waze_data.csv", False)
-    x=1
+    processed_data = load_data("../task1/data/waze_take_features.csv", False)

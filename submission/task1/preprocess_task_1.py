@@ -2,46 +2,38 @@ import pandas as pd
 
 
 class Preprocess(object):
-    DUMMY_LIST = ['linqmap_type_0', 'linqmap_type_1', 'linqmap_type_2', 'linqmap_type_3',
-                  'linqmap_subtype_0', 'linqmap_subtype_1', 'linqmap_subtype_2', 'linqmap_subtype_3',
-                  'type_label', 'subtype_label']
+    DUMMY_LIST = ['linqmap_type', 'linqmap_subtype']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
                     'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
-                    'linqmap_city', 'linqmap_street']
-    Y_COLUMNS = ['linqmap_type', 'linqmap_subtype', 'x', 'y']
+                    'linqmap_city', 'linqmap_street', 'test_set', 'update_date']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
-    DATE_COLS = ['month', 'day', 'weekday']
-    TIME_COLS = ['hour', 'minute']
+    DATE_COLS = ['weekday']
+    TIME_COLS = ['hour']
     DATETIME_COLUMNS = {'update_date': DATE_COLS + TIME_COLS}
     NUMBER_COLS = ['linqmap_reportRating', 'linqmap_roadType', 'linqmap_reliability']
 
     def __init__(self, data):
         self.data = data
-
-        self.drop_unused_columns()
         self.convert_update_date()
-        self.features = data[[]]
-        self.groups_of_features = pd.DataFrame()
-        self.labels = None
-
+        self.datetimes()
+        self.magvar()
+        self.dummy_df()
+        self.drop_unused_columns()
 
     def group_records(self):
+        groups_of_features = pd.DataFrame()
         copied_data = self.data.copy()
         copied_data = copied_data.reset_index()
-        copied_data = copied_data.drop(["index"], axis=1)
-        for name, value in copied_data.iteritems():
-            for i in range(4):
-                copied_value = value[i:value.shape[0] - 5 + i]
-                copied_value = copied_value.reset_index()
-                copied_value = copied_value.drop(["index"], axis=1)
-                self.groups_of_features[name + "_" + str(i)] = copied_value
 
-        labels_data = copied_data[4:]
-        labels_data = labels_data.reset_index()
-        self.groups_of_features["type_label"] = labels_data["linqmap_type"]
-        self.groups_of_features["subtype_label"] = labels_data["linqmap_subtype"]
-        self.groups_of_features["x_label"] = labels_data["x"]
-        self.groups_of_features["y_label"] = labels_data["y"]
+        for i in range(4):
+            records = copied_data[copied_data["index"] % 4 == i]
+            records = records.reset_index()
+            records = records.drop(["index"], axis=1)
+            records = records.drop(["level_0"], axis=1)
+            for name, value in records.iteritems():
+                groups_of_features[name + "_" + str(i)] = value
+
+        return groups_of_features
 
     def add_new_feature(self, name, feature):
         self.data[name] = feature
@@ -56,10 +48,6 @@ class Preprocess(object):
             for col in cols:
                 self.add_new_feature(col_name + '_' + col, getattr(datetime_col.dt, col))
 
-    def numbers(self):
-        for col in self.NUMBER_COLS:
-            self.add_new_feature(col, self.data[col])
-
     def convert_update_date(self):
         self.data['update_date'] = pd.to_datetime(self.data['update_date'], unit='ms')
 
@@ -68,13 +56,26 @@ class Preprocess(object):
 
     def dummy_df(self):
         for x in self.DUMMY_LIST:
-            dummies = pd.get_dummies(self.groups_of_features[x], prefix=x, dummy_na=False)
-            self.groups_of_features = self.groups_of_features.drop(x, 1)
-            self.groups_of_features = pd.concat([self.groups_of_features, dummies], axis=1)
+            dummies = pd.get_dummies(self.data[x], prefix=x, dummy_na=False)
+            self.data = self.data.drop(x, 1)
+            self.data = pd.concat([self.data, dummies], axis=1)
+
+    def magvar(self):
+        import numpy as np
+        magvar = self.data["linqmap_magvar"]
+        sin_magvar = np.sin(magvar)
+        cos_magvar = np.cos(magvar)
+
+        self.add_new_feature("sin_magvar", sin_magvar)
+        self.add_new_feature("cos_magvar", cos_magvar)
 
 
 def preprocess_task_1(data):
+    data = pd.read_csv("data/waze_take_features.csv")
     preprocesser = Preprocess(data)
-    preprocesser.group_records()
-    preprocesser.dummy_df()
-    return preprocesser.groups_of_features
+    return preprocesser.group_records()
+
+
+if __name__ == '__main__':
+    preprocess_task_1(None)
+    x = 1
