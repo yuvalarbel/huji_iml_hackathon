@@ -7,29 +7,27 @@ import pandas as pd
 
 
 class Preprocess(object):
+    DUMMY_LIST = ['linqmap_type_0', 'linqmap_type_1', 'linqmap_type_2', 'linqmap_type_3',
+                  'linqmap_subtype_0', 'linqmap_subtype_1', 'linqmap_subtype_2', 'linqmap_subtype_3',
+                  'type_label', 'subtype_label']
     DROP_COLUMNS = ['OBJECTID', 'pubDate', 'linqmap_reportDescription', 'linqmap_nearby',
-                    'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments']
+                    'linqmap_reportMood', 'linqmap_expectedBeginDate', 'linqmap_expectedEndDate', 'nComments',
+                    'linqmap_city', 'linqmap_street']
     Y_COLUMNS = ['linqmap_type', 'linqmap_subtype', 'x', 'y']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
     DATE_COLS = ['month', 'day', 'weekday']
     TIME_COLS = ['hour', 'minute']
     DATETIME_COLUMNS = {'update_date': DATE_COLS + TIME_COLS}
-    DATETIME_DIFFERENCES = [('pubDate', 'update_date')]
     NUMBER_COLS = ['linqmap_reportRating', 'linqmap_roadType', 'linqmap_reliability']
 
     def __init__(self, data):
         self.data = data
         self.filter_city()
-        self.convert_update_date()
         self.drop_unused_columns()
+        self.convert_update_date()
         self.features = data[[]]
         self.groups_of_features = pd.DataFrame()
         self.labels = None
-
-        self.feature_funcs = [
-            self.datetimes,
-            self.numbers
-        ]
 
     def run(self):
         self.create_features()
@@ -75,17 +73,6 @@ class Preprocess(object):
             for col in cols:
                 self.add_new_feature(col_name + '_' + col, getattr(datetime_col.dt, col))
 
-    def datetime_differences(self):
-        for earlier, later in self.DATETIME_DIFFERENCES:
-            diff = self.get_datetime_diff_in_secs(earlier, later)
-            self.add_new_feature('_'.join([earlier, later, 'diff']), diff)
-
-    def get_datetime_diff_in_secs(self, earlier, later):
-        later_dt = self.col_to_datetime(later)
-        earlier_dt = self.col_to_datetime(earlier)
-        diff = (later_dt - earlier_dt) / np.timedelta64(1, 's')
-        return diff
-
     def numbers(self):
         for col in self.NUMBER_COLS:
             self.add_new_feature(col, self.data[col])
@@ -96,15 +83,22 @@ class Preprocess(object):
     def drop_unused_columns(self):
         self.data = self.data.drop(self.DROP_COLUMNS, axis=1)
 
+    def dummy_df(self):
+        for x in self.DUMMY_LIST:
+            dummies = pd.get_dummies(self.groups_of_features[x], prefix=x, dummy_na=False)
+            self.groups_of_features = self.groups_of_features.drop(x, 1)
+            self.groups_of_features = pd.concat([self.groups_of_features, dummies], axis=1)
+
 
 def load_data(filename: str, has_tags: bool):
     full_data = pd.read_csv(filename).sort_values(by=['update_date'])
     preprocesser = Preprocess(full_data)
     preprocesser.run()
     preprocesser.group_records()
-
+    preprocesser.dummy_df()
     return preprocesser.groups_of_features
 
 
 if __name__ == '__main__':
     processed_data = load_data("../task1/data/waze_data.csv", False)
+    x=1
