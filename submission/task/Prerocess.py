@@ -29,9 +29,6 @@ class Preprocess(object):
         self.groups_of_features = pd.DataFrame()
         self.labels = None
 
-    def run(self):
-        self.create_features()
-        return self.features
 
     def group_records(self):
         copied_data = self.data.copy()
@@ -54,9 +51,6 @@ class Preprocess(object):
     def filter_city(self):
         self.data = self.data[self.data["linqmap_city"] == "תל אביב - יפו"]
 
-    def create_features(self):
-        for func in self.feature_funcs:
-            func()
 
     def add_new_feature(self, name, feature):
         assert feature.size == self.data.shape[0]
@@ -93,7 +87,6 @@ class Preprocess(object):
 def load_data(filename: str, has_tags: bool):
     full_data = pd.read_csv(filename).sort_values(by=['update_date'])
     preprocesser = Preprocess(full_data)
-    preprocesser.run()
     preprocesser.group_records()
     preprocesser.dummy_df()
     return preprocesser.groups_of_features
