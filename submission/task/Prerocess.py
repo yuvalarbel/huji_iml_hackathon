@@ -23,7 +23,7 @@ class Preprocess(object):
         self.convert_update_date()
         self.drop_unused_columns()
         self.features = data[[]]
-        self.groups_of_features = data[[]]
+        self.groups_of_features = pd.DataFrame()
         self.labels = None
 
         self.feature_funcs = [
@@ -36,17 +36,22 @@ class Preprocess(object):
         return self.features
 
     def group_records(self):
-        for name, value in self.features.iteritems():
+        copied_data = self.data.copy()
+        copied_data = copied_data.reset_index()
+        copied_data = copied_data.drop(["index"], axis=1)
+        for name, value in copied_data.iteritems():
             for i in range(4):
-                self.groups_of_features.insert(self.features.shape[1], name + "_" + i,
-                                               value[i:self.features.shape[0] - 5 + i])
+                copied_value = value[i:value.shape[0] - 5 + i]
+                copied_value = copied_value.reset_index()
+                copied_value = copied_value.drop(["index"], axis=1)
+                self.groups_of_features[name + "_" + str(i)] = copied_value
 
-        self.groups_of_features.insert(self.features.shape[1], "type_label",
-                                       self.features["linqmap_type"][4:])
-        self.groups_of_features.insert(self.features.shape[1], "subtype_label",
-                                       self.features["linqmap_subtype"][4:])
-        self.groups_of_features.insert(self.features.shape[1], "x_label", self.features["x"][4:])
-        self.groups_of_features.insert(self.features.shape[1], "y_label", self.features["y"][4:])
+        # self.groups_of_features["type_label"] = self.features["linqmap_type"][4:]
+        # self.groups_of_features["subtype_label"] = self.features["linqmap_subtype"][4:]
+        labels_data = copied_data[4:]
+        labels_data = labels_data.reset_index()
+        self.groups_of_features["x_label"] = labels_data["x"]
+        self.groups_of_features["y_label"] = labels_data["y"]
 
     def filter_city(self):
         self.data = self.data[self.data["linqmap_city"] == "תל אביב - יפו"]
@@ -98,9 +103,9 @@ def load_data(filename: str, has_tags: bool):
     preprocesser.run()
     preprocesser.group_records()
 
-    return preprocesser.data
+    return preprocesser.groups_of_features
 
 
 if __name__ == '__main__':
-    processed_data = load_data("../task1/data/waze_data_train.csv", False)
+    processed_data = load_data("../task1/data/waze_data.csv", False)
     x = 1
