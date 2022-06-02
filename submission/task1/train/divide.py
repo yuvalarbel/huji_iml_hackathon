@@ -1,7 +1,14 @@
 import pandas as pd
 
 
+def filter_city(data):
+    data = data[data["linqmap_city"] == "תל אביב - יפו"]
+    return data
+
+
 def divide(data):
+    filter_city(data)
+
     groups_of_features = pd.DataFrame()
     copied_data = data.copy()
     copied_data = copied_data.reset_index()
@@ -20,4 +27,3 @@ def divide(data):
             groups_of_features["y_label"] = records["y"]
 
     return groups_of_features
-
