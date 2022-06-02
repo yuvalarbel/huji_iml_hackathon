@@ -1,0 +1,3 @@
+
+def divide(data):
+    pass

@@ -1,9 +1,8 @@
 import argparse
 
 from consts import TEST_DATA_PATH, TASK_2_TEST_DATES
-from preprocess import preprocess
-from task_1 import run_task_1
-from task_2 import run_task_2
+from predict.task_1 import run_task_1
+from predict.task_2 import run_task_2
 
 
 USAGE = "\n%(prog)s\n" \
@@ -20,9 +19,8 @@ def main(task_1_test_set, task_2_list_of_dates):
     :param task_2_list_of_dates: list of dates to predict for task 2
     :type task_2_list_of_dates: list of pd.date
     """
-    print(task_1_test_set)
-    print(task_2_list_of_dates)
-    return
+    print("Task 1 test set path:", task_1_test_set)
+    print("Task 2 test dates:", task_2_list_of_dates)
 
     clean_data = None
 
