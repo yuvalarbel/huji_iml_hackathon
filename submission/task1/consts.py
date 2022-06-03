@@ -8,6 +8,10 @@ TASK_1_VALIDATION_SET = 'data/task1/validation_set.csv'
 TASK_1_VALIDATION_LABELS = 'data/task1/validation_labels.csv'
 TASK_1_TEST_SET = 'data/task1/test_set.csv'
 TASK_1_TEST_LABELS = 'data/task1/test_labels.csv'
+BIG_TRAINING_SET = 'data/task1/big_set.csv'
+BIG_TRAINING_LABELS = 'data/task1/big_labels.csv'
+FULL_SET = 'data/task1/full_set.csv'
+FULL_LABELS = 'data/task1/full_labels.csv'
 
 
 TEL_AVIV = "תל אביב - יפו"
@@ -43,3 +47,5 @@ TASK_1_MODELS_NAMES = ['linqmap_type', 'x', 'y',
 BASE_LABELS = ['linqmap_type', 'x', 'y']
 TYPE = 'linqmap_type'
 SUBTYPE = 'linqmap_subtype'
+
+FINAL_ORDER = [TYPE, SUBTYPE, 'x', 'y']

@@ -14,7 +14,7 @@ def test_task_1(predicted_results, true_results_file_path):
 
     euclidean_distance = (predicted_results['x'] - true_results['x']) ** 2 + \
                          (predicted_results['y'] - true_results['y']) ** 2
-    location_score = euclidean_distance.sum()
+    location_score = euclidean_distance.mean()
 
     # print all scores
     print('Type F1-Macro Score:', type_score)

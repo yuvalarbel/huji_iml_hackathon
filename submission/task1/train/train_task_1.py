@@ -1,11 +1,22 @@
 import numpy as np
 import pandas as pd
 import json
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.linear_model import ElasticNet
 import joblib
 
 from consts import TASK_1_TRAINING_SET, TASK_1_TRAINING_LABELS, TASK_1_MODEL_PATH, TYPES, BASE_LABELS, TYPE, SUBTYPE
 from preprocess_task_1 import preprocess_task_1
+
+
+CLASSIFIER_FINAL_PARAMS = {'n_estimators': 100,
+                           'learning_rate': 0.6,
+                           'max_depth': 4}
+X_REGRESSOR_FINAL_PARAMS = {'alpha': 10}
+Y_REGRESSOR_FINAL_PARAMS = {'n_estimators': 100,
+                            'max_depth': 29,
+                            'max_features': 'sqrt'}
 
 
 def train_task_1(training_data_file_path, training_labels_file_path, save_path, tag=''):
@@ -23,18 +34,18 @@ def train_task_1(training_data_file_path, training_labels_file_path, save_path, 
 
 
 class Task1Model(object):
-    def __init__(self, save_path, tag='', n_estimators=100, max_depth=None):
+    def __init__(self, save_path, tag=''):
         self.save_path = save_path
         self.tag = tag
         self.models = {
-            'linqmap_type': RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth),
-            'x': RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth),
-            'y': RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth),
+            'linqmap_type': GradientBoostingClassifier(**CLASSIFIER_FINAL_PARAMS),
+            'x': ElasticNet(**X_REGRESSOR_FINAL_PARAMS),
+            'y': RandomForestRegressor(**Y_REGRESSOR_FINAL_PARAMS),
 
-            'linqmap_subtype_jam': RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth),
-            'linqmap_subtype_road_closed': RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth),
-            'linqmap_subtype_weatherhazard': RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth),
-            'linqmap_subtype_accident': RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+            'linqmap_subtype_jam': GradientBoostingClassifier(**CLASSIFIER_FINAL_PARAMS),
+            'linqmap_subtype_road_closed': GradientBoostingClassifier(**CLASSIFIER_FINAL_PARAMS),
+            'linqmap_subtype_weatherhazard': GradientBoostingClassifier(**CLASSIFIER_FINAL_PARAMS),
+            'linqmap_subtype_accident': GradientBoostingClassifier(**CLASSIFIER_FINAL_PARAMS)
         }
         self.trained = {label: False for label in self.models}
 

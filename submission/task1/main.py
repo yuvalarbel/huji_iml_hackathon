@@ -1,6 +1,6 @@
 import argparse
 
-from consts import TEST_DATA_PATH, TASK_2_TEST_DATES
+from consts import *
 from predict.predict_task_1 import predict_task_1
 from predict.predict_task_2 import predict_task_2
 
@@ -8,6 +8,8 @@ from predict.predict_task_2 import predict_task_2
 USAGE = "\n%(prog)s\n" \
         "%(prog)s [-t task_1_test_set] [-d task_2_list_of_dates]\n" \
         "%(prog)s [--testset task_1_test_set] [--dates task_2_list_of_dates]"
+
+TAG = '_full_data_final_model'
 
 
 def main(task_1_test_set, task_2_list_of_dates):
@@ -22,16 +24,15 @@ def main(task_1_test_set, task_2_list_of_dates):
     print("Task 1 test set path:", task_1_test_set)
     print("Task 2 test dates:", task_2_list_of_dates)
 
-    clean_data = None
-
     try:
-        run_task_1(clean_data)
+        predictions = predict_task_1(task_1_test_set, TASK_1_MODEL_PATH, TAG)[FINAL_ORDER]
+        predictions.to_csv('predictions.csv', index=False)
         print(f"Finished task 1!")
     except Exception as e:
         print(f"Exception ({type(e)}) in task 1:", str(e))
 
     try:
-        run_task_2(clean_data)
+
         print(f"Finished task 2!")
     except Exception as e:
         print(f"Exception ({type(e)}) in task 2:", str(e))
