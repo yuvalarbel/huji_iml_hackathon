@@ -30,7 +30,7 @@ def predict_task_2(date_list, output_path, ma, mj, mrc, mwh):
         curr_table = pd.DataFrame(
             np.array(test_y[inds % 2 == 0]) + np.array(test_y[inds % 2 == 1]),
             columns=['ACCIDENT', 'JAM', 'ROAD_CLOSED', 'WEATHERHAZARD'])
-        curr_table.to_csv(output_path + " " + date + ".csv", index=False)
+        curr_table.to_csv(output_path + date + ".csv", index=False)
 
 
 # if __name__ == "__main__":

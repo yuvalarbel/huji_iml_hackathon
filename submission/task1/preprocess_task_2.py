@@ -79,8 +79,8 @@ def process_for_poisson_regression(dt):
     model_df = pd.DataFrame(
         columns=['group', 'weekday', 'hour', 'ACCIDENT', 'JAM',
                  'ROAD_CLOSED', 'WEATHERHAZARD'])
-    dt.string_group = dt.update_date_weekday.astype(str) \
-                      + ' ' + dt.update_date_hour.astype(str)
+    dt['string_group'] = dt.update_date_weekday.astype(str) \
+                         + ' ' + dt.update_date_hour.astype(str)
     grouped = dt.groupby(dt.string_group)
 
     model_df.ACCIDENT = grouped.linqmap_type_ACCIDENT.sum()
@@ -92,9 +92,9 @@ def process_for_poisson_regression(dt):
     model_df.hour = model_df.group.apply(lambda x: x.split()[1])
 
     # Create train set for model
-    train_x = model_df.drop(['group', 'ACCIDENT', 'JAM',
-                             'ROAD_CLOSED', 'WEATHERHAZARD'], 1)
-    train_y = model_df.drop(['group', 'weekday', 'hour'], 1)
+    train_x = model_df.drop(labels=['group', 'ACCIDENT', 'JAM', 'ROAD_CLOSED', 'WEATHERHAZARD'],
+                            axis=1)
+    train_y = model_df.drop(labels=['group', 'weekday', 'hour'], axis=1)
 
     # fig1 = px.histogram(train_y, x='ROAD_CLOSED', nbins=15)
     # fig1.show()
