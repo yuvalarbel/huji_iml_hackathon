@@ -9,7 +9,7 @@ class Preprocess(object):
                     'linqmap_reportMood', 'linqmap_expectedBeginDate',
                     'linqmap_expectedEndDate', 'nComments',
                     'linqmap_city', 'linqmap_street', 'update_date',
-                    'linqmap_magvar', 'Unnamed: 0']
+                    'linqmap_magvar', 'Unnamed: 0', 'linqmap_type', 'linqmap_subtype']
     DATETIME_FORMAT = '%dd/%mm/%yyyy %H:%M:%S'
     DATE_COLS = ['weekday']
     TIME_COLS = ['hour']
