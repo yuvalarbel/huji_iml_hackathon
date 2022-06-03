@@ -4,13 +4,18 @@ import itertools
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.svm import SVR
 from sklearn.ensemble import GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import SGDRegressor
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import ElasticNet
 import joblib
 
 from consts import *
 from preprocess_task_1 import preprocess_task_1
 from model import LocationModel, TypeModel, SubtypeModels
 
-TAG = '_optimized_first_boosting'
+TAG = '_optimized_final_again'
+
 
 def get_get_adaboost(**kwargs_forest):
     def get_adaboost(**kwargs):
@@ -20,44 +25,28 @@ def get_get_adaboost(**kwargs_forest):
 
 
 CLASSIFIER_PARAM_GRID = [(RandomForestClassifier,
-                          {'n_estimators': [100],
-                           'max_depth': [None, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30],
-                           'max_features': ['sqrt', 'log2', 0.5]},
+                          {'n_estimators': [90, 100],
+                           'max_depth': [None, 16, 18, 20, 22, 24, 26],
+                           'max_features': ['sqrt', 0.5]},
                           10),
                          (GradientBoostingClassifier,
-                          {'n_estimators': [80, 90, 100],
-                           'learning_rate': [0.3, 0.5, 0.7, 1.0],
-                           'max_depth': [1, 2, 3, 4, 5, 6, 7]},
-                          1),
-                         (get_get_adaboost(n_estimators=100, max_features='sqrt', max_depth=1),
-                          {'n_estimators': [50, 100]},
-                          1),
-                         (get_get_adaboost(n_estimators=100, max_features='sqrt', max_depth=3),
-                          {'n_estimators': [50, 100]},
-                          1),
-                         (get_get_adaboost(n_estimators=100, max_features='sqrt', max_depth=5),
-                          {'n_estimators': [50, 100]},
+                          {'n_estimators': [95, 100, 105],
+                           'learning_rate': [0.5, 0.55, 0.6, 0.65, 0.7],
+                           'max_depth': [3, 4, 5]},
                           1)
                          ]
 REGRESSOR_PARAM_GRID = [(RandomForestRegressor,
                          {'n_estimators': [100],
-                          'max_depth': [None, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30],
-                          'max_features': ['sqrt', 'log2', 0.5]},
+                          'max_depth': [25, 26, 27, 28, 29],
+                          'max_features': ['sqrt', 0.5]},
                          10),
-                        (SVR,
-                         {'kernel': ['linear'],
-                          'C': (0.1, 0.5, 1, 10, 50, 500)},
-                         1),
-                        (SVR,
-                         {'kernel': ['rbf', 'sigmoid'],
-                          'gamma': ['scale', 'auto'],
-                          'C': (0.1, 0.5, 1, 10, 50, 500)},
-                         1),
-                        (SVR,
-                         {'kernel': ['poly'],
-                          'degree': [2, 3, 4, 5, 6],
-                          'gamma': ['scale', 'auto'],
-                          'C': (0.1, 0.5, 1, 10, 50, 500)},
+                        # (SVR,
+                        #  {'kernel': ['poly'],
+                        #   'degree': [50, 75, 100, 200, 300, 500, 1000, 1500, 2000, 5000, 10000],
+                        #   'C': (1, 3, 6, 10)},
+                        #  1)
+                        (ElasticNet,
+                         {'alpha': (1, 3, 6, 10, 20, 30, 40, 50, 70, 100)},
                          1)
                         ]
 
@@ -83,18 +72,18 @@ def train_task_1(training_data_file_path, training_labels_file_path,
 
     type_opt.fit(X_train, y_train[TYPE], X_val, y_val[TYPE], "type")
     print("Val Score for optimized type:", type_opt.best_val_score)
-    print("Parameters for optimized type:", type(type_opt.best_model), 'with', type_opt.best_params)
+    print("Parameters for optimized type:", type_opt.best_params)
     print("Test Score for optimized type:", type_opt.score(X_test, y_test[TYPE]))
 
     x_location_opt.fit(X_train, y_train.x, X_val, y_val.x, "x_location")
     print("Val Score for optimized X location:", x_location_opt.best_val_score)
-    print("Parameters for optimized X location:", type(x_location_opt.best_model), 'with', x_location_opt.best_params)
+    print("Parameters for optimized X location:", x_location_opt.best_params)
     x_test_score = x_location_opt.score(X_test, y_test.x)
     print("Test Score for optimized X location:", x_test_score)
 
     y_location_opt.fit(X_train, y_train.y, X_val, y_val.y, "y_location")
     print("Val Score for optimized Y location:", y_location_opt.best_val_score)
-    print("Parameters for optimized Y location:", type(y_location_opt.best_model), 'with', y_location_opt.best_params)
+    print("Parameters for optimized Y location:", y_location_opt.best_params)
     y_test_score = y_location_opt.score(X_test, y_test.y)
     print("Test Score for optimized Y location:", y_test_score)
 
@@ -105,7 +94,7 @@ def train_task_1(training_data_file_path, training_labels_file_path,
     type_predictions_test = type_opt.best_model.predict(X_test)
     subtype_opt.fit(X_train, y_train[[TYPE, SUBTYPE]], X_val, y_val[SUBTYPE], "subtype", type_predictions_val)
     print("Val Score for optimized subtype:", subtype_opt.best_val_score)
-    print("Parameters for optimized subtype:", type(subtype_opt.best_model), 'with', subtype_opt.best_params)
+    print("Parameters for optimized subtype:", subtype_opt.best_params)
     print("Test Score for optimized subtype:", subtype_opt.score(X_test, y_test[SUBTYPE], type_predictions_test))
 
     print("Optimizers fitting finished.")
@@ -145,18 +134,21 @@ class Optimizer(object):
             for specific_params in param_dicts:
                 if counter % 10 == 0:
                     print("{}/{}".format(counter, num_of_param_dicts))
-                for i in range(iterations):
-                    model = self.model(model_type, specific_params)
-                    model.fit(X_train, y_train)
-                    val_score = model.score(X_val, y_val) if not self.special \
-                        else model.score(X_val, y_val, previous_predictions)
-                    if val_score > self.best_val_score:
-                        self.best_val_score = val_score
-                        self.best_model = model
-                        self.best_params = specific_params
-                    write_to_log(logname, csv_list([specific_params[k] for k in titles] + [val_score]))
+                try:
+                    for i in range(iterations):
+                        model = self.model(model_type, specific_params)
+                        model.fit(X_train, y_train)
+                        val_score = model.score(X_val, y_val) if not self.special \
+                            else model.score(X_val, y_val, previous_predictions)
+                        if val_score > self.best_val_score:
+                            self.best_val_score = val_score
+                            self.best_model = model
+                            self.best_params = specific_params
+                        write_to_log(logname, csv_list([specific_params[k] for k in titles] + [val_score]))
+                except Exception:
+                    pass
                 counter += 1
-            write_to_log(logname, "")
+            write_to_log(logname, '')
 
     def score(self, X_test, y_test, previous_predictions=None):
         return self.best_model.score(X_test, y_test) if not self.special \
@@ -167,8 +159,8 @@ def csv_list(lst):
     return '"' + '","'.join(str(i) for i in lst) + '"'
 
 
-def write_to_log(logname, line):
-    with open(logname, 'a') as f:
+def write_to_log(file, line):
+    with open(file, 'a') as f:
         f.write(line + '\n')
 
 

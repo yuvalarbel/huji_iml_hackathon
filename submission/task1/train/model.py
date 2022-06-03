@@ -33,7 +33,7 @@ class LocationModel(BaseEstimator):
 
     def score(self, X, y, sample_weight = None):
         predictions = self.predict(X)
-        return np.mean((predictions - y) ** 2)
+        return -np.mean((predictions - y) ** 2)
 
 
 class SubtypeModels(BaseEstimator):
