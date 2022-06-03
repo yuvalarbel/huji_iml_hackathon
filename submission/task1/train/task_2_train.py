@@ -1,42 +1,58 @@
-from consts import TASK_2_TRAIN
+from datetime import datetime
+
+from consts import TASK_2_TRAIN, TASK_2_TEST_DATES
 import pandas as pd
 import numpy as np
 from preprocess_task_2 import preprocess_task_2
 from sklearn import linear_model
 
+DATETIME_FORMAT = '%Y-%m-%d'
 
-def train_model(training_data_file_path):
+
+def train_model(training_data_file_path, date_list, output_path):
     """
     Train the model
     """
-    dt = preprocess_task_2(pd.read_csv(training_data_file_path))
-    dt.update_date_weekday = (dt.update_date_weekday + 2) % 7
-    model_df = pd.DataFrame(
-        columns=['group', 'weekday', 'hour', 'ACCIDENT', 'JAM',
-                 'ROAD_CLOSED', 'WEATHERHAZARD'])
-    dt.string_group = dt.update_date_weekday.astype(str) \
-                      + ' ' + dt.update_date_hour.astype(str)
-    grouped = dt.groupby(dt.string_group)
 
-    model_df.ACCIDENT = grouped.linqmap_type_ACCIDENT.sum()
-    model_df.JAM = grouped.linqmap_type_JAM.sum()
-    model_df.ROAD_CLOSED = grouped.linqmap_type_ROAD_CLOSED.sum()
-    model_df.WEATHERHAZARD = grouped.linqmap_type_WEATHERHAZARD.sum()
-    model_df.group = model_df.index.astype(str)
-    model_df.weekday = model_df.group.apply(lambda x: x.split()[0])
-    model_df.hour = model_df.group.apply(lambda x: x.split()[1])
+    # Preprocess dataframe for poisson regression
+    n = len(date_list)
+    train_x, train_y = preprocess_task_2(pd.read_csv(training_data_file_path))
 
-    train_x = model_df.drop(['group', 'weekday', 'hour'], 1)
-    train_y = model_df.drop(['group', 'ACCIDENT', 'JAM',
-                 'ROAD_CLOSED', 'WEATHERHAZARD'], 1)
+    model_accident = linear_model.PoissonRegressor()
+    model_accident.fit(train_x, train_y['ACCIDENT'])
+    model_jam = linear_model.PoissonRegressor()
+    model_jam.fit(train_x, train_y['JAM'])
+    model_road_closed = linear_model.PoissonRegressor()
+    model_road_closed.fit(train_x, train_y['ROAD_CLOSED'])
+    model_weather_hazard = linear_model.PoissonRegressor()
+    model_weather_hazard.fit(train_x, train_y['WEATHERHAZARD'])
 
-    test_x=pd.DataFrame(columns=['weekday', 'hour'])
-    test_x['weekday']=[1,1,1,1,1,1,3,3,3,3,3,3,5,5,5,5,5,5]
-    test_x['hour']=[8,9,12,13,18,19,8,9,12,13,18,19,8,9,12,13,18,19]
+    # Create csv files for each date
+    for date in date_list:
+        test_x = pd.DataFrame(columns=['weekday', 'hour'])
+        day = datetime.strptime(date, DATETIME_FORMAT)
+        day = (day.weekday() + 2) % 4
+        test_x['weekday'] = [day] * 6
+        test_x['hour'] = [8, 9, 12, 13, 18, 19]
 
+        test_y = pd.DataFrame(columns=['ACCIDENT', 'JAM',
+                                       'ROAD_CLOSED', 'WEATHERHAZARD'])
+        test_y.ACCIDENT = model_accident.predict(test_x).astype(int)
+        test_y.JAM = model_jam.predict(test_x).astype(int)
+        test_y.ROAD_CLOSED = model_road_closed.predict(test_x).astype(int)
+        test_y.WEATHERHAZARD = model_weather_hazard.predict(test_x).astype(int)
+
+        # Add together sets of hours
+        inds = test_y.index
+        curr_table = pd.DataFrame(
+            np.array(test_y[inds % 2 == 0]) + np.array(test_y[inds % 2 == 1]),
+            columns=['ACCIDENT', 'JAM', 'ROAD_CLOSED', 'WEATHERHAZARD'])
+        curr_table.to_csv(output_path + " " + date + ".csv", index=False)
 
 
 
 if __name__ == "__main__":
     train_model('C:\\Users\\User\\School\\Hackathons\\IML Hackathon '
-                '2022\\huji_iml_hackathon\\submission\\task1\\data\\task2\\waze_data_train.csv')
+                '2022\\huji_iml_hackathon\\submission\\task1\\data'
+                '\\waze_data_train.csv', TASK_2_TEST_DATES,
+                "C:\\Users\\User\\Desktop\\IMLHack\\Task2\\")
