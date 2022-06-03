@@ -10,6 +10,7 @@ TASK_1_VALIDATION_LABELS = 'data/task1/validation_labels.csv'
 TASK_1_TEST_SET = 'data/task1/test_set.csv'
 TASK_1_TEST_LABELS = 'data/task1/test_labels.csv'
 
+TASK_2_TRAINING_SET = 'data/task2/waze_data_test.csv'
 
 TEL_AVIV = "תל אביב - יפו"
 
