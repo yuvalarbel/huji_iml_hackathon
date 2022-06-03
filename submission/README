@@ -1,0 +1,68 @@
+# Required Files:
+.\README
+.\USERS
+.\project.pdf
+.\task1\main.py
+.\task1\requirements.txt
+
+# Prediction Files:
+.\task1\predictions.csv
+.\task1\2022-06-05.csv
+.\task1\2022-06-07.csv
+.\task1\2022-06-09.csv
+
+# Framework files:
+.\task1\consts.py
+.\task1\preprocess_task_1.py
+.\task1\preprocess_task_2.py
+.\task1\run_training.py
+.\task1\create_sets.py
+
+# Data Sets:
+.\task1\data\waze_data.csv
+.\task1\data\waze_take_features.csv
+.\task1\data\task1\test_set.csv
+.\task1\data\task1\train_set.csv
+.\task1\data\task1\validation_set.csv
+.\task1\data\task1\train_labels.csv
+.\task1\data\task1\validation_labels.csv
+.\task1\data\task1\test_labels.csv
+.\task1\data\task1\big_set.csv
+.\task1\data\task1\big_labels.csv
+.\task1\data\task1\full_set.csv
+.\task1\data\task1\full_labels.csv
+.\task1\data\task2\waze_data_dev.csv
+.\task1\data\task2\waze_data_test.csv
+.\task1\data\task2\waze_data_train.csv
+
+# Final saved models:
+.\task1\saved_models\task1_model_linqmap_type_full_data_final_model
+.\task1\saved_models\task1_model_x_full_data_final_model
+.\task1\saved_models\task1_model_y_full_data_final_model
+.\task1\saved_models\task1_model_linqmap_subtype_jam_full_data_final_model
+.\task1\saved_models\task1_model_linqmap_subtype_road_closed_full_data_final_model
+.\task1\saved_models\task1_model_linqmap_subtype_weatherhazard_full_data_final_model
+.\task1\saved_models\task1_model_linqmap_subtype_accident_full_data_final_model
+.\task1\saved_models\task1_model_trained_check_full_data_final_model
+
+# Train and Optimization Files
+.\task1\train\__init__.py
+.\task1\train\train_task_1.py
+.\task1\train\train_task_2.py
+.\task1\train\optimize_task_1.py
+.\task1\train\model.py
+
+# Prediction Files
+.\task1\predict\__init__.py
+.\task1\predict\predict_task_1.py
+.\task1\predict\predict_task_2.py
+
+# Test Files
+.\task1\test\__init__.py
+.\task1\test\test_task_1.py
+.\task1\test\test_task_2.py
+
+# Data Research Files
+.\task1\R code files\Export_Shapes.R
+.\task1\R code files\Split_Train_Dev_Test.R
+.\task1\create_PCA.py
