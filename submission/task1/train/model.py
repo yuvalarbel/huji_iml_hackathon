@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.base import BaseEstimator
 from sklearn.metrics import f1_score
 
@@ -41,27 +40,16 @@ class LocationModel(BaseEstimator):
         predictions = self.predict(X)
         euclidean_distance = (predictions.x - y.x) ** 2 + \
                              (predictions.y - y.y) ** 2
-        return euclidean_distance.sum()
-
-    def set_params(self, **params):
-        small_params = {k: v for k, v in params.items() if k != 'model_type'}
-        if self.model_type != params['model_type']:
-            self.model_type = params['model_type']
-            self.model_x = self.model_type()
-            self.model_y = self.model_type()
-        self.model_x.set_params(**small_params)
-        self.model_y.set_params(**small_params)
-        return super().set_params(**params)
+        return -euclidean_distance.sum()
 
 
 class SubtypeModels(BaseEstimator):
-    def __init__(self):
-        self.model_type = RandomForestClassifier
+    def __init__(self, model_type, params):
         self.models = {
-            'jam': RandomForestClassifier(n_estimators=100, max_depth=None),
-            'road_closed': RandomForestClassifier(n_estimators=100, max_depth=None),
-            'weatherhazard': RandomForestClassifier(n_estimators=100, max_depth=None),
-            'accident': RandomForestClassifier(n_estimators=100, max_depth=None)
+            'jam': model_type(**params),
+            'road_closed': model_type(**params),
+            'weatherhazard': model_type(**params),
+            'accident': model_type(**params)
         }
         self.trained = {
             'jam': False,
@@ -98,13 +86,3 @@ class SubtypeModels(BaseEstimator):
         return f1_score(true_subtype_lines,
                         predictions.loc[true_subtype_lines.index],
                         average='macro')
-
-    def set_params(self, **params):
-        small_params = {k: v for k, v in params.items() if k != 'model_type'}
-        if self.model_type != params['model_type']:
-            self.model_type = params['model_type']
-            for type_, model in self.models.items():
-                self.models[type_] = self.model_type()
-        for type_, model in self.models.items():
-            self.models[type_].set_params(**small_params)
-        return super().set_params(**params)
