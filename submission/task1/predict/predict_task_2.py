@@ -1,7 +1,7 @@
 
-def run_task_2():
+def predict_task_2():
     pass
 
 
 if __name__ == "__main__":
-    run_task_2()
+    predict_task_2()

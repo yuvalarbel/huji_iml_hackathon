@@ -1,8 +1,8 @@
 import argparse
 
 from consts import TEST_DATA_PATH, TASK_2_TEST_DATES
-from predict.predict_task_1 import run_task_1
-from predict.predict_task_2 import run_task_2
+from predict.predict_task_1 import predict_task_1
+from predict.predict_task_2 import predict_task_2
 
 
 USAGE = "\n%(prog)s\n" \
