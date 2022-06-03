@@ -23,24 +23,17 @@ class TypeModel(BaseEstimator):
 
 class LocationModel(BaseEstimator):
     def __init__(self, model_type, params):
-        self.model_x = model_type(**params)
-        self.model_y = model_type(**params)
+        self.model = model_type(**params)
 
     def fit(self, X, y, sample_weight = None):
-        self.model_x.fit(X, y.x, sample_weight)
-        self.model_y.fit(X, y.y, sample_weight)
+        self.model.fit(X, y, sample_weight)
 
     def predict(self, X):
-        results = X[[]].copy()
-        results['x'] = self.model_x.predict(X)
-        results['y'] = self.model_y.predict(X)
-        return results
+        return self.model.predict(X)
 
     def score(self, X, y, sample_weight = None):
         predictions = self.predict(X)
-        euclidean_distance = (predictions.x - y.x) ** 2 + \
-                             (predictions.y - y.y) ** 2
-        return -euclidean_distance.sum()
+        return np.mean((predictions - y) ** 2)
 
 
 class SubtypeModels(BaseEstimator):
@@ -69,8 +62,9 @@ class SubtypeModels(BaseEstimator):
             self.models[specific_type.lower()].fit(X[idxs], y[SUBTYPE][idxs], sample_weight=type_sample_weight)
             self.trained[specific_type.lower()] = True
 
-    def predict(self, X):
+    def predict(self, X, type_predictions):
         results = X[[]].copy()
+        results[TYPE] = type_predictions
         results[SUBTYPE] = ""
         for type_, mc_subtypes in MOST_COMMON_SUBTYPE.items():
             type_data = X[results[TYPE] == type_]
@@ -78,10 +72,10 @@ class SubtypeModels(BaseEstimator):
                 results.loc[type_data.index, SUBTYPE] = self.models[type_.lower()].predict(type_data)
             else:
                 results.loc[results[TYPE] == type_, SUBTYPE] = mc_subtypes
-        return results
+        return results[SUBTYPE]
 
-    def score(self, X, y, sample_weight=None):
-        predictions = self.predict(X)
+    def score(self, X, y, type_predictions):
+        predictions = self.predict(X, type_predictions)
         true_subtype_lines = y[y.notna()]
         return f1_score(true_subtype_lines,
                         predictions.loc[true_subtype_lines.index],
