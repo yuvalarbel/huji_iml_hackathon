@@ -48,11 +48,25 @@ def train_model(training_data_file_path, date_list, output_path):
             np.array(test_y[inds % 2 == 0]) + np.array(test_y[inds % 2 == 1]),
             columns=['ACCIDENT', 'JAM', 'ROAD_CLOSED', 'WEATHERHAZARD'])
         curr_table.to_csv(output_path + " " + date + ".csv", index=False)
-
+    return model_accident, model_jam, model_road_closed, model_weather_hazard
 
 
 if __name__ == "__main__":
-    train_model('C:\\Users\\User\\School\\Hackathons\\IML Hackathon '
-                '2022\\huji_iml_hackathon\\submission\\task1\\data'
-                '\\waze_data_train.csv', TASK_2_TEST_DATES,
-                "C:\\Users\\User\\Desktop\\IMLHack\\Task2\\")
+    ma, mj, mrc, mwh = train_model('C:\\Users\\User\\School\\Hackathons\\IML '
+                                   'Hackathon '
+                                   '2022\\huji_iml_hackathon\\submission\\task1\\data'
+                                   '\\task2\\waze_data_train.csv',
+                                   TASK_2_TEST_DATES,
+                                   "C:\\Users\\User\\Desktop\\IMLHack\\Task2\\")
+    test_x, true_y = preprocess_task_2(pd.read_csv(
+        'C:\\Users\\User\\School\\Hackathons\\IML Hackathon '
+        '2022\\huji_iml_hackathon\\submission\\task1\\data\\task2'
+        '\\waze_data_test.csv'))
+
+    test_y = pd.DataFrame(columns=['ACCIDENT', 'JAM',
+                                   'ROAD_CLOSED', 'WEATHERHAZARD'])
+    test_y.ACCIDENT = ma.predict(test_x).astype(int)
+    test_y.JAM = mj.predict(test_x).astype(int)
+    test_y.ROAD_CLOSED = mrc.predict(test_x).astype(int)
+    test_y.WEATHERHAZARD = mwh.predict(test_x).astype(int)
+    print('yay')

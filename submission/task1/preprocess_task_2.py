@@ -97,14 +97,14 @@ def process_for_poisson_regression(dt):
                              'ROAD_CLOSED', 'WEATHERHAZARD'], 1)
     train_y = model_df.drop(['group', 'weekday', 'hour'], 1)
 
-    fig1 = px.histogram(train_y, x='ROAD_CLOSED', nbins=15)
-    fig1.show()
-    fig1 = px.histogram(train_y, x='ACCIDENT', nbins=20)
-    fig1.show()
-    fig1 = px.histogram(train_y, x='JAM', nbins=15)
-    fig1.show()
-    fig1 = px.histogram(train_y, x='WEATHERHAZARD', nbins=10)
-    fig1.show()
+    # fig1 = px.histogram(train_y, x='ROAD_CLOSED', nbins=15)
+    # fig1.show()
+    # fig1 = px.histogram(train_y, x='ACCIDENT', nbins=20)
+    # fig1.show()
+    # fig1 = px.histogram(train_y, x='JAM', nbins=15)
+    # fig1.show()
+    # fig1 = px.histogram(train_y, x='WEATHERHAZARD', nbins=10)
+    # fig1.show()
     return train_x, train_y
 
 
