@@ -1,6 +1,7 @@
 TRAINING_DATA_PATH = 'data/waze_data.csv'
 TEST_DATA_PATH = 'data/waze_take_features.csv'
 TASK_2_TEST_DATES = ['2022-06-05', '2022-06-07', '2022-06-09']
+TASK_2_TRAIN = 'data/task2/waze_data_train.csv'
 
 TASK_1_TRAINING_SET = 'data/task1/train_set.csv'
 TASK_1_TRAINING_LABELS = 'data/task1/train_labels.csv'
@@ -13,6 +14,7 @@ BIG_TRAINING_LABELS = 'data/task1/big_labels.csv'
 FULL_SET = 'data/task1/full_set.csv'
 FULL_LABELS = 'data/task1/full_labels.csv'
 
+TASK_2_TRAINING_SET = 'data/task2/waze_data_test.csv'
 
 TEL_AVIV = "תל אביב - יפו"
 

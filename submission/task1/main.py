@@ -1,5 +1,6 @@
 import argparse
 
+import train.train_task_2
 from consts import *
 from predict.predict_task_1 import predict_task_1
 from predict.predict_task_2 import predict_task_2
@@ -32,7 +33,9 @@ def main(task_1_test_set, task_2_list_of_dates):
         print(f"Exception ({type(e)}) in task 1:", str(e))
 
     try:
-
+        ma, mj, mrc, mwh = train.train_task_2.train_model(TASK_2_TRAIN,
+                                                          task_2_list_of_dates)
+        predict_task_2(task_2_list_of_dates, './', ma, mj, mrc, mwh)
         print(f"Finished task 2!")
     except Exception as e:
         print(f"Exception ({type(e)}) in task 2:", str(e))
